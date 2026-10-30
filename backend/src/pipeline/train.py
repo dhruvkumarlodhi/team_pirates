@@ -100,7 +100,7 @@ def train_diagnosis_model(
         transform=train_transform,
         class_to_idx=class_to_idx,
     )
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=2)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
     # 3. Compute class weights to counteract class imbalance
     targets = [s["target"] for s in dataset.samples]
