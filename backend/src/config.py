@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Dict, Set
 
 # Base directory paths
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-MODELS_DIR = BASE_DIR / "models"
-REPORTS_DIR = BASE_DIR / "reports"
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = BACKEND_DIR.parent
+DATA_DIR = ROOT_DIR / "data"
+MODELS_DIR = BACKEND_DIR / "models"
+REPORTS_DIR = BACKEND_DIR / "reports"
 
 # Ensure runtime directories exist
 MODELS_DIR.mkdir(parents=True, exist_ok=True)

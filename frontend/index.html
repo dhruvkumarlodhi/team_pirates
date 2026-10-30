@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic DermaGuard — Clinical Triage Portal</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --pass: #22c55e;
+      --refer: #ef4444;
+      --reimage: #f97316;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 2rem; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    .container { width: 100%; max-width: 900px; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 0.5rem; }
+    header p { color: var(--text-muted); font-size: 1.05rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; margin-bottom: 1.5rem; }
+    .drop-zone { border: 2px dashed var(--primary); border-radius: 10px; padding: 2.5rem; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(56, 189, 248, 0.05); }
+    .drop-zone:hover { background: rgba(56, 189, 248, 0.12); }
+    .preview-img { max-width: 280px; max-height: 280px; border-radius: 8px; margin-top: 1rem; display: none; object-fit: cover; }
+    .btn { background: var(--primary); color: #000; font-weight: bold; border: none; padding: 0.8rem 1.8rem; border-radius: 8px; cursor: pointer; font-size: 1rem; margin-top: 1rem; display: inline-block; }
+    .badge { padding: 0.4rem 1rem; border-radius: 20px; font-weight: bold; display: inline-block; font-size: 1.1rem; }
+    .badge-auto { background: rgba(34, 197, 94, 0.2); color: var(--pass); border: 1px solid var(--pass); }
+    .badge-refer { background: rgba(239, 68, 68, 0.2); color: var(--refer); border: 1px solid var(--refer); }
+    .badge-reimage { background: rgba(249, 115, 22, 0.2); color: var(--reimage); border: 1px solid var(--reimage); }
+    .result-section { display: none; margin-top: 1.5rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+    ul { list-style-position: inside; color: var(--text-muted); line-height: 1.6; margin-top: 0.8rem; }
+    .metric-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+    #loader { display: none; color: var(--primary); margin-top: 1rem; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛡️ Agentic DermaGuard</h1>
+      <p>Multi-Agent Skin Lesion Screening & Clinical Triage Portal</p>
+    </header>
+
+    <div class="card">
+      <h3>1. Upload Dermoscopic Image</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.4rem 0 1rem 0;">Upload a skin lesion photograph to trigger the multi-agent screening pipeline.</p>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <p>📷 Drag and drop skin image here, or <strong>browse files</strong></p>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+        <img id="preview" class="preview-img" alt="Preview">
+      </div>
+      <button class="btn" id="analyzeBtn" style="display:none;" onclick="analyzeImage()">🔍 Analyze Lesion</button>
+      <div id="loader">⏳ Multi-agent pipeline running (Quality check → Diagnosis → Triage)...</div>
+    </div>
+
+    <div class="card result-section" id="resultsCard">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h2>Triage Assessment Outcome</h2>
+        <span id="decisionBadge" class="badge"></span>
+      </div>
+
+      <div class="grid-2">
+        <div style="background: rgba(0,0,0,0.25); padding: 1.2rem; border-radius: 8px;">
+          <h4 style="color: var(--primary); margin-bottom: 0.8rem;">1. Image Quality Agent</h4>
+          <div class="metric-row"><span>Status:</span><strong id="qStatus"></strong></div>
+          <div class="metric-row"><span>Quality Score:</span><strong id="qScore"></strong></div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); padding: 1.2rem; border-radius: 8px;">
+          <h4 style="color: var(--primary); margin-bottom: 0.8rem;">2. Diagnosis Agent</h4>
+          <div class="metric-row"><span>Predicted Disease:</span><strong id="dDisease"></strong></div>
+          <div class="metric-row"><span>Confidence:</span><strong id="dConfidence"></strong></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <h4>3. Clinical Decision Rationale</h4>
+        <ul id="reasonsList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedFile = null;
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      selectedFile = file;
+      const preview = document.getElementById("preview");
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "inline-block";
+      document.getElementById("analyzeBtn").style.display = "inline-block";
+      document.getElementById("resultsCard").style.display = "none";
+    }
+
+    async function analyzeImage() {
+      if (!selectedFile) return;
+      const loader = document.getElementById("loader");
+      const resultsCard = document.getElementById("resultsCard");
+      loader.style.display = "block";
+      resultsCard.style.display = "none";
+
+      try {
+        const response = await fetch("http://localhost:8000/api/triage", {
+          method: "POST",
+          headers: { "Content-Type": "image/jpeg" },
+          body: selectedFile,
+        });
+
+        if (!response.ok) throw new Error("Backend response error: " + response.statusText);
+        const data = await response.json();
+
+        // Populate results
+        const badge = document.getElementById("decisionBadge");
+        badge.innerText = data.triage_decision;
+        badge.className = "badge " + (
+          data.triage_decision === "AUTO_TRIAGE" ? "badge-auto" :
+          data.triage_decision === "REFER" ? "badge-refer" : "badge-reimage"
+        );
+
+        document.getElementById("qStatus").innerText = data.quality.status;
+        document.getElementById("qScore").innerText = (data.quality.score * 100).toFixed(1) + "%";
+
+        if (data.diagnosis) {
+          document.getElementById("dDisease").innerText = data.diagnosis.disease_name;
+          document.getElementById("dConfidence").innerText = (data.diagnosis.confidence * 100).toFixed(1) + "%";
+        } else {
+          document.getElementById("dDisease").innerText = "Aborted (Quality Failed)";
+          document.getElementById("dConfidence").innerText = "N/A";
+        }
+
+        const list = document.getElementById("reasonsList");
+        list.innerHTML = "";
+        data.clinical_reasons.forEach(r => {
+          const li = document.createElement("li");
+          li.innerText = r;
+          list.appendChild(li);
+        });
+
+        resultsCard.style.display = "block";
+      } catch (err) {
+        alert("Failed to connect to DermaGuard Backend API.\nMake sure the backend server is running on http://localhost:8000!\nError: " + err.message);
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
+
