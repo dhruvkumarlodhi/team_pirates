@@ -42,8 +42,10 @@ BENIGN_CLASSES: Set[str] = {"nv", "bkl", "df", "vasc"}
 # Image Quality Assessment Thresholds (OpenCV Rules)
 QUALITY_CONFIG = {
     # Laplacian Variance: lower values denote blurrier images
-    "blur_fail_threshold": 60.0,       # Definitely blurry, unreadable
-    "blur_warning_threshold": 100.0,   # Borderline sharp
+    # HAM10000 dermoscopy images are naturally soft (median ~48); thresholds
+    # are calibrated to the dataset's actual variance distribution.
+    "blur_fail_threshold": 15.0,       # Definitely blurry, unreadable (bottom ~2%)
+    "blur_warning_threshold": 30.0,   # Borderline sharp (bottom ~10%)
     
     # Overexposure / Specular Glare: ratio of pixels with luminance >= 245
     "glare_fail_ratio": 0.12,          # >12% washed out
