@@ -1,0 +1,291 @@
+{
+  "submission_metadata": {
+    "project_name": "Agentic DermaGuard: Multi-Agent Skin Lesion Screening & Triage",
+    "team_name": "team_pirates",
+    "level": "Day 1 / Level 1 Baseline",
+    "submission_timestamp": "2026-10-30T13:51:10.393542+00:00",
+    "target_classes_count": 7,
+    "validation_images_evaluated": 1942,
+    "diagnostic_model": "mobilenet_v3_small"
+  },
+  "baseline_classification_performance": {
+    "accuracy": 0.8141,
+    "balanced_accuracy": 0.7221,
+    "macro_metrics": {
+      "precision": 0.6685,
+      "recall": 0.7221,
+      "f1_score": 0.686
+    },
+    "weighted_metrics": {
+      "precision": 0.8321,
+      "recall": 0.8141,
+      "f1_score": 0.8192
+    },
+    "per_class": {
+      "akiec": {
+        "precision": 0.4595,
+        "recall": 0.5397,
+        "f1_score": 0.4964,
+        "support": 63
+      },
+      "bcc": {
+        "precision": 0.5548,
+        "recall": 0.8515,
+        "f1_score": 0.6719,
+        "support": 101
+      },
+      "bkl": {
+        "precision": 0.7427,
+        "recall": 0.5991,
+        "f1_score": 0.6632,
+        "support": 212
+      },
+      "df": {
+        "precision": 0.6842,
+        "recall": 0.5652,
+        "f1_score": 0.619,
+        "support": 23
+      },
+      "mel": {
+        "precision": 0.5692,
+        "recall": 0.6916,
+        "f1_score": 0.6245,
+        "support": 214
+      },
+      "nv": {
+        "precision": 0.9341,
+        "recall": 0.8817,
+        "f1_score": 0.9072,
+        "support": 1302
+      },
+      "vasc": {
+        "precision": 0.7353,
+        "recall": 0.9259,
+        "f1_score": 0.8197,
+        "support": 27
+      }
+    },
+    "confusion_matrix": {
+      "classes": [
+        "akiec",
+        "bcc",
+        "bkl",
+        "df",
+        "mel",
+        "nv",
+        "vasc"
+      ],
+      "matrix": [
+        [
+          34,
+          15,
+          7,
+          0,
+          2,
+          5,
+          0
+        ],
+        [
+          6,
+          86,
+          1,
+          1,
+          4,
+          3,
+          0
+        ],
+        [
+          16,
+          14,
+          127,
+          0,
+          20,
+          33,
+          2
+        ],
+        [
+          2,
+          3,
+          0,
+          13,
+          2,
+          3,
+          0
+        ],
+        [
+          10,
+          7,
+          9,
+          2,
+          148,
+          37,
+          1
+        ],
+        [
+          6,
+          29,
+          27,
+          3,
+          83,
+          1148,
+          6
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          25
+        ]
+      ]
+    }
+  },
+  "image_quality_summary": {
+    "pass_count": 1582,
+    "pass_rate": 0.8146,
+    "warning_count": 330,
+    "warning_rate": 0.1699,
+    "fail_count": 30,
+    "fail_rate": 0.0154,
+    "mean_quality_score": 0.9226,
+    "defect_breakdown": {
+      "blur_failures": 24,
+      "illumination_failures": 15,
+      "glare_failures": 7,
+      "border_obstructions": 344
+    }
+  },
+  "triage_distribution_summary": {
+    "auto_triage_count": 1028,
+    "auto_triage_rate": 0.5294,
+    "refer_count": 884,
+    "refer_rate": 0.4552,
+    "re_image_count": 30,
+    "re_image_rate": 0.0154
+  },
+  "sample_explainability_audit": [
+    {
+      "image_id": "ISIC_0024317",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.9309,
+      "predicted_class": "nv",
+      "confidence": 0.6028,
+      "clinical_rationale": [
+        "DIAGNOSTIC AMBIGUITY: Predicted 'Melanocytic Nevi' confidence (60.3%) is below the autonomous screening safety threshold (70%).",
+        "CLINICAL DIRECTIVE: In-person dermatology consultation recommended."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024330",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.9244,
+      "predicted_class": "bcc",
+      "confidence": 0.8184,
+      "clinical_rationale": [
+        "MALIGNANCY SUSPICION: Predicted lesion is 'Basal Cell Carcinoma' (bcc) with 81.8% confidence.",
+        "CLINICAL DIRECTIVE: Urgent dermatologist referral mandated for dermoscopy micro-examination and biopsy evaluation."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024332",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.9311,
+      "predicted_class": "akiec",
+      "confidence": 0.6152,
+      "clinical_rationale": [
+        "MALIGNANCY SUSPICION: Predicted lesion is 'Actinic Keratoses and Intraepithelial Carcinoma' (akiec) with 61.5% confidence.",
+        "CLINICAL DIRECTIVE: Urgent dermatologist referral mandated for dermoscopy micro-examination and biopsy evaluation."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024340",
+      "triage_decision": "AUTO_TRIAGE",
+      "quality_status": "PASS",
+      "quality_score": 0.9281,
+      "predicted_class": "nv",
+      "confidence": 0.776,
+      "clinical_rationale": [
+        "AUTONOMOUS CLEARANCE: High-confidence benign finding 'Melanocytic Nevi' (77.6% confidence) validated on high-grade dermoscopic imagery.",
+        "RECOMMENDATION: Routine periodic surveillance or primary-care checkup."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024341",
+      "triage_decision": "AUTO_TRIAGE",
+      "quality_status": "PASS",
+      "quality_score": 0.9224,
+      "predicted_class": "nv",
+      "confidence": 1.0,
+      "clinical_rationale": [
+        "AUTONOMOUS CLEARANCE: High-confidence benign finding 'Melanocytic Nevi' (100.0% confidence) validated on high-grade dermoscopic imagery.",
+        "RECOMMENDATION: Routine periodic surveillance or primary-care checkup."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024346",
+      "triage_decision": "AUTO_TRIAGE",
+      "quality_status": "PASS",
+      "quality_score": 0.9232,
+      "predicted_class": "nv",
+      "confidence": 1.0,
+      "clinical_rationale": [
+        "AUTONOMOUS CLEARANCE: High-confidence benign finding 'Melanocytic Nevi' (100.0% confidence) validated on high-grade dermoscopic imagery.",
+        "RECOMMENDATION: Routine periodic surveillance or primary-care checkup."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024349",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.9332,
+      "predicted_class": "mel",
+      "confidence": 0.7016,
+      "clinical_rationale": [
+        "MALIGNANCY SUSPICION: Predicted lesion is 'Melanoma' (mel) with 70.2% confidence.",
+        "CLINICAL DIRECTIVE: Urgent dermatologist referral mandated for dermoscopy micro-examination and biopsy evaluation."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024354",
+      "triage_decision": "REFER",
+      "quality_status": "WARNING",
+      "quality_score": 0.8854,
+      "predicted_class": "nv",
+      "confidence": 0.6945,
+      "clinical_rationale": [
+        "QUALITY CAVEAT: Image has quality warnings that may mask lesion micro-features.",
+        "Borderline image sharpness (Laplacian variance 26.8 < 30.0). Subtle lesion patterns may be degraded.",
+        "Predicted benign condition 'Melanocytic Nevi' (69.5%), but clinical referral is advised to confirm findings due to suboptimal image capture."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024358",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.9261,
+      "predicted_class": "bkl",
+      "confidence": 0.4434,
+      "clinical_rationale": [
+        "DIAGNOSTIC AMBIGUITY: Predicted 'Benign Keratosis-like Lesions' confidence (44.3%) is below the autonomous screening safety threshold (70%).",
+        "CLINICAL DIRECTIVE: In-person dermatology consultation recommended."
+      ]
+    },
+    {
+      "image_id": "ISIC_0024360",
+      "triage_decision": "REFER",
+      "quality_status": "PASS",
+      "quality_score": 0.931,
+      "predicted_class": "bcc",
+      "confidence": 0.9984,
+      "clinical_rationale": [
+        "MALIGNANCY SUSPICION: Predicted lesion is 'Basal Cell Carcinoma' (bcc) with 99.8% confidence.",
+        "CLINICAL DIRECTIVE: Urgent dermatologist referral mandated for dermoscopy micro-examination and biopsy evaluation."
+      ]
+    }
+  ]
+}

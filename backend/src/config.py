@@ -70,7 +70,7 @@ MODEL_CONFIG = {
     "architecture": "mobilenet_v3_small",  # Fast, accurate, lightweight for Mac CPU/MPS
     "input_size": (224, 224),
     "batch_size": 32,
-    "epochs": 10,
+    "epochs": 15,
     "learning_rate": 1e-3,
     "num_classes": len(HAM10000_CLASSES),
     "checkpoint_path": MODELS_DIR / "diagnosis_model.pth",

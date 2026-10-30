@@ -119,6 +119,7 @@ def train_diagnosis_model(
 
     criterion = nn.CrossEntropyLoss(weight=weights)
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
 
     # 5. Training loop
     model.train()
@@ -146,7 +147,7 @@ def train_diagnosis_model(
 
         epoch_loss = running_loss / total
         epoch_acc = correct / total
-        print(f"Epoch {epoch}/{epochs} - Loss: {epoch_loss:.4f} - Accuracy: {epoch_acc * 100:.2f}%")
+        scheduler.step()
 
     # 6. Save checkpoint
     save_path = output_checkpoint or MODEL_CONFIG["checkpoint_path"]
